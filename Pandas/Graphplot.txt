@@ -1,0 +1,116 @@
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+# Dummy data for model accuracies
+data = {
+    'Model': ['Inception v3', 'ResNet', 'VGG 19', 'Inception v3', 'ResNet', 'VGG 19'],
+    'Section': ['Medicinal Plants', 'Medicinal Plants', 'Medicinal Plants', 'Raw Materials', 'Raw Materials', 'Raw Materials'],
+    'Accuracy': [0.85, 0.92, 0.88, 0.78, 0.86, 0.90]
+}
+
+# Create a DataFrame
+df = pd.DataFrame(data)
+
+# Create a table using pandas
+table = pd.pivot_table(df, index=['Model', 'Section'], values='Accuracy', aggfunc='first').unstack()
+
+# Create a bar graph with different colors and margin
+colors = ['b', 'g', 'r', 'c', 'm', 'y']
+bar_width = 0.35
+bar_positions = np.arange(len(df['Model'].unique()))
+
+fig, ax = plt.subplots(figsize=(10, 6))
+
+for i, section in enumerate(df['Section'].unique()):
+    for j, model in enumerate(df['Model'].unique()):
+        subset = df[(df['Model'] == model) & (df['Section'] == section)]
+        x = bar_positions[j] + i * bar_width
+        ax.bar(
+            x=x,
+            height=subset['Accuracy'].values[0],
+            label=section,  # Use the section as the label
+            color=colors[i],
+            width=bar_width,
+            align='center'
+        )
+
+# Set labels and legend
+ax.set_xlabel('Model')
+ax.set_ylabel('Accuracy')
+ax.set_xticks(bar_positions + (bar_width * (len(df['Section'].unique()) - 1)) / 2)
+ax.set_xticklabels(df['Model'].unique())
+
+# Show the table
+print(table)
+
+# Create a custom legend with labels
+legend_labels = ['Medicinal Plants', 'Raw Materials']
+legend_colors = [plt.Line2D([0], [0], color='b', lw=4), plt.Line2D([0], [0], color='g', lw=4)]
+ax.legend(legend_colors, legend_labels,loc='upper left', bbox_to_anchor=(0.0, 1.20), title='Legend')
+
+plt.show()
+
+
+
+
+
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+# Dummy data for model accuracies
+data = {
+    'Model': ['Inception v3', 'ResNet', 'VGG 19', 'Inception v3', 'ResNet', 'VGG 19'],
+    'Section': ['Medicinal Plants', 'Medicinal Plants', 'Medicinal Plants', 'Raw Materials', 'Raw Materials', 'Raw Materials'],
+    'Accuracy': [0.85, 0.92, 0.88, 0.78, 0.86, 0.90]
+}
+
+# Create a DataFrame
+df = pd.DataFrame(data)
+
+# Create a table using pandas
+table = pd.pivot_table(df, index=['Model', 'Section'], values='Accuracy', aggfunc='first').unstack()
+
+# Define colors for each model and section
+colors = {
+    ('VGG 19', 'Medicinal Plants'): 'red',
+    ('VGG 19', 'Raw Materials'): 'green',
+    ('ResNet', 'Medicinal Plants'): 'blue',
+    ('ResNet', 'Raw Materials'): 'orange',
+    ('Inception v3', 'Medicinal Plants'): 'purple',
+    ('Inception v3', 'Raw Materials'): 'pink'
+}
+
+bar_width = 0.35
+bar_positions = np.arange(len(df['Model'].unique()))
+
+fig, ax = plt.subplots(figsize=(10, 6))
+
+for i, model in enumerate(df['Model'].unique()):
+    for j, section in enumerate(df['Section'].unique()):
+        color = colors.get((model, section), 'gray')  # Default to gray if not specified
+        subset = df[(df['Model'] == model) & (df['Section'] == section)]
+        x = bar_positions[i] + j * bar_width
+        ax.bar(
+            x=x,
+            height=subset['Accuracy'].values[0],
+            label=f"{model} ({section})",
+            color=color,
+            width=bar_width,
+            align='center'
+        )
+
+# Set labels and legend
+ax.set_xlabel('Model')
+ax.set_ylabel('Accuracy')
+ax.set_xticks(bar_positions + ((len(df['Section'].unique()) - 1) * bar_width) / 2)
+ax.set_xticklabels(df['Model'].unique())  # Rotate x-axis labels for better readability
+
+# Move the legend to the upper left corner with padding
+ax.legend(loc='upper left', bbox_to_anchor=(0.0, 1.35), title='Legend')
+
+# Show the table
+print(table)
+plt.show()
